@@ -1,5 +1,5 @@
 module.exports = {
-  title: 'MEVN Full Stack Vue.js, Express & MongoDB',
+  title: 'MEVN - Full Stack Vue.js, Express & MongoDB',
   description: 'Aprende Full Stack Vue.js, Express & MongoDB',
   base: '/mevn',
   locales:{
@@ -17,6 +17,7 @@ module.exports = {
       [
         '/',
         '/01-primeros-pasos/',
+        '/02-bases-datos/',
       ]
   }
  
