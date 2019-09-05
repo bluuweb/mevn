@@ -99,6 +99,26 @@ const path = require('path');
 app.use(express.static(path.join(__dirname, 'public')));
 ```
 
+## History Vue.js
+Vue.js utiliza el modo History para simular las rutas de un sitio web, ya que al ser SPA es un simple HTML, esto nos puede traer problemas con Express por lo tanto agregaremos otro Middleware de configuración. 
+[https://router.vuejs.org/guide/essentials/history-mode.html#example-server-configurations](https://router.vuejs.org/guide/essentials/history-mode.html#example-server-configurations)
+
+Este se llama [connect-history-api-fallback](connect-history-api-fallback)
+```
+npm install --save connect-history-api-fallback
+```
+
+Muy importante copiar el siguiente código por abajo de la configuración de las rutas y dejar la configuración de rutas estáticas al final:
+```js
+// Configuración globarl de rutas
+app.use('/api', require('./routes'));
+
+// Middleware para Vue.js router modo history
+const history = require('connect-history-api-fallback');
+app.use(history());
+app.use(express.static(path.join(__dirname, 'public')));
+```
+
 ## Resumen
 En resumen nuestro archivo `app.js` debería ir quedando así:
 
@@ -115,12 +135,17 @@ app.use(morgan('tiny'));
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, 'public')));
+//app.use(express.static(path.join(__dirname, 'public')));
 
 // Rutas
 app.get('/', function (req, res) {
   res.send('Hello World!');
 });
+
+// Middleware para Vue.js router modo history
+const history = require('connect-history-api-fallback');
+app.use(history());
+app.use(express.static(path.join(__dirname, 'public')));
 
 app.set('puerto', process.env.PORT || 3000);
 app.listen(app.get('puerto'), function () {
@@ -164,12 +189,17 @@ app.use(morgan('tiny'));
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, 'public')));
+// app.use(express.static(path.join(__dirname, 'public')));
 
 // Rutas
 app.get('/', (req, res) => {
   res.send('Hello World!');
 });
+
+// Middleware para Vue.js router modo history
+const history = require('connect-history-api-fallback');
+app.use(history());
+app.use(express.static(path.join(__dirname, 'public')));
 
 app.set('puerto', process.env.PORT || 3000);
 app.listen(app.get('puerto'), () => {

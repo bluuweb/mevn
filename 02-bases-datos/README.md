@@ -29,7 +29,7 @@ import mongoose from 'mongoose';
 const Schema = mongoose.Schema;
 
 const tareaSchema = new Schema({
-  nombre:   { type: String, unique: true },
+  nombre:   { type: String, required: [true, 'El nombre es necesario'] },
   descripcion: String,
   date: { type: Date, default: Date.now },
   activo: Boolean
@@ -52,6 +52,7 @@ const app = express();
 // Importamos modelo Tarea
 import Tarea from '../models/tarea';
 
+// Agregamos una nueva tarea
 app.post('/nueva-tarea', async (req, res, next)=>{
 
   let body = req.body;
@@ -63,15 +64,16 @@ app.post('/nueva-tarea', async (req, res, next)=>{
 
   } catch (error) {
     
-    res.status(500).send({
-      mensaje: 'Ocurrio un error'
+    return res.status(500).json({
+      ok: false,
+      mensaje: 'Ocurrio un error',
+      error
     });
-
-    next(error);
-
+    
   }
-
-})
+  next();
+  
+});
 
 // Exportamos la configuración de express app
 module.exports = app;
@@ -95,7 +97,7 @@ app.get('/', (req, res) => {
 });
 
 // Configuración globarl de rutas
-app.use(require('./routes'));
+app.use('/api', require('./routes'));
 ```
 
 ## Postman
@@ -134,5 +136,113 @@ Damos clic en Send y cruzamos los dedos para ver si todo funciona ok.
     "date": "2019-09-02T02:48:38.281Z",
     "__v": 0
 }
+```
+
+## Rutas GET
+```js
+// Encontrar una tarea
+app.get('/buscar/', async (req, res, next) => {
+
+  try {
+    console.log(req.query._id);
+    const registroDB = await Tarea.findOne({_id: req.query._id});
+    if(!registroDB){
+      res.status(404).json({
+        ok: false,
+        mensaje: 'No existe la tarea'
+      });
+    }else{
+      res.status(200).json(registroDB);
+    }
+    
+  } catch (error) {
+    return res.status(500).json({
+      ok: false,
+      mensaje: 'Ocurrio un error',
+      error
+    });
+  }
+  next();
+
+});
+
+// Mostrar todas las tareas
+app.get('/tareas', async(req, res, next) => {
+
+  try {
+    let valor = req.query.valor;
+    const registroDB = await Tarea.find({
+      'nombre': new RegExp(valor, 'i')
+    }).sort({'date': -1})
+    res.status(200).send(registroDB);
+    
+  } catch (error) {
+    return res.status(500).json({
+      ok: false,
+      mensaje: 'Ocurrio un error',
+      error
+    });
+  }
+
+  next();
+});
+```
+
+## Rutas PUT
+```js
+// Actualizar tarea
+app.put('/tarea/:id', async(req, res, next) => {
+
+  try {
+    
+    const tareaDB = await Tarea.findByIdAndUpdate(
+      {_id: req.params.id},
+      {nombre: req.body.nombre, descripcion: req.body.descripcion, activo: req.body.activo},
+      {useFindAndModify: false}
+      );
+
+      res.status(200).json(tareaDB);
+
+  } catch (error) {
+    return res.status(500).json({
+      ok: false,
+      mensaje: 'Ocurrio un error',
+      error
+    });
+  }
+
+  next();
+});
+```
+
+## Rutas DELETE
+```js
+// Eliminar Tarea
+// Eliminar Tarea
+app.delete('/tarea/:id', async(req, res, next) => {
+
+
+  try {
+    const tareaDB = await Tarea.findByIdAndDelete({_id: req.params.id});
+
+    if (!tareaDB) {
+        return res.status(400).json({
+            ok: false,
+            mensaje: 'Usuario no encontrado'
+        });
+    }
+
+    res.status(200).json(tareaDB);
+  } catch (error) {
+    return res.status(500).json({
+      ok: false,
+      mensaje: 'Ocurrio un error',
+      error
+    });
+  }
+
+  next();
+
+});
 ```
 
