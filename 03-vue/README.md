@@ -1,4 +1,4 @@
-# Front-End con Vue.js
+# 03 Front-End con Vue.js
 Vamos a realizar la configuración de Vue.js, si no sabes nada de Vue puedes [acceder al curso aquí](http://bit.ly/2WtBh9f)
 
 ## Intalación Vue UI
@@ -249,3 +249,13 @@ method:{
   },
 }
 ```
+
+## Producción
+Ejecutar:
+```
+npm run build
+```
+
+Copiar todos los archivos de la carpeta `dist` y llevarlos dentro de la carpeta `public` de nuestro servidor con Express.
+
+Ejecutar el servidor y probar nuestro CRUD en: `http://localhost:3000`

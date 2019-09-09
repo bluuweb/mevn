@@ -53,7 +53,7 @@ const app = express();
 import Tarea from '../models/tarea';
 
 // Agregamos una nueva tarea
-app.post('/nueva-tarea', async (req, res, next)=>{
+app.post('/nueva-tarea', async (req, res)=>{
 
   let body = req.body;
 
@@ -71,7 +71,6 @@ app.post('/nueva-tarea', async (req, res, next)=>{
     });
     
   }
-  next();
   
 });
 
@@ -141,7 +140,7 @@ Damos clic en Send y cruzamos los dedos para ver si todo funciona ok.
 ## Rutas GET
 ```js
 // Encontrar una tarea
-app.get('/buscar/', async (req, res, next) => {
+app.get('/buscar/', async (req, res) => {
 
   try {
     console.log(req.query._id);
@@ -162,12 +161,11 @@ app.get('/buscar/', async (req, res, next) => {
       error
     });
   }
-  next();
 
 });
 
 // Mostrar todas las tareas
-app.get('/tareas', async(req, res, next) => {
+app.get('/tareas', async(req, res) => {
 
   try {
     let valor = req.query.valor;
@@ -183,15 +181,13 @@ app.get('/tareas', async(req, res, next) => {
       error
     });
   }
-
-  next();
 });
 ```
 
 ## Rutas PUT
 ```js
 // Actualizar tarea
-app.put('/tarea/:id', async(req, res, next) => {
+app.put('/tarea/:id', async(req, res) => {
 
   try {
     
@@ -210,8 +206,6 @@ app.put('/tarea/:id', async(req, res, next) => {
       error
     });
   }
-
-  next();
 });
 ```
 
@@ -219,7 +213,7 @@ app.put('/tarea/:id', async(req, res, next) => {
 ```js
 // Eliminar Tarea
 // Eliminar Tarea
-app.delete('/tarea/:id', async(req, res, next) => {
+app.delete('/tarea/:id', async(req, res) => {
 
 
   try {
@@ -240,8 +234,6 @@ app.delete('/tarea/:id', async(req, res, next) => {
       error
     });
   }
-
-  next();
 
 });
 ```
