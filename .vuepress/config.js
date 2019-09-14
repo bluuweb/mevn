@@ -15,7 +15,7 @@ module.exports = {
     ],
     sidebar:
       [
-        '/',
+        '',
         '/01-primeros-pasos/',
         // '/02-bases-datos/',
         // '/03-vue/',
