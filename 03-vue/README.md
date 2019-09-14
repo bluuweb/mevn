@@ -42,14 +42,14 @@ axios.defaults.baseURL = 'http://localhost:3000/api';
 Configurar rutas: Agregaremos la siguiente ruta con una vista:
 ```js
 {
-  path: '/tareas',
-  name: 'tareas',
-  component: () => import(/* webpackChunkName: "about" */ './views/Tareas.vue')
+  path: '/notas',
+  name: 'notas',
+  component: () => import(/* webpackChunkName: "about" */ './views/Notas.vue')
 }
 ```
 
 ## View GET
-Agregar una vista llamada `Tareas.vue`, donde agregaremos un nuestro listado de tareas:
+Agregar una vista llamada `Notas.vue`, donde agregaremos un nuestro listado de notas:
 ```html
 <table class="table">
   <thead>
@@ -62,14 +62,14 @@ Agregar una vista llamada `Tareas.vue`, donde agregaremos un nuestro listado de 
     </tr>
   </thead>
   <tbody>
-    <tr v-for="(item, index) in tareas" :key="index">
+    <tr v-for="(item, index) in notas" :key="index">
       <th scope="row">{{item._id}}</th>
       <td>{{item.nombre}}</td>
       <td>{{item.descripcion}}</td>
       <td>{{item.date}}</td>
       <td>
         <b-button class="btn-warning btn-sm mx-2" @click="activarEdicion(item._id)">Actualizar</b-button>
-        <b-button class="btn-danger btn-sm mx-2" @click="eliminarTarea(item._id)">Eliminar</b-button>
+        <b-button class="btn-danger btn-sm mx-2" @click="eliminarNota(item._id)">Eliminar</b-button>
       </td>
     </tr>
   </tbody>
@@ -79,18 +79,18 @@ Agregar una vista llamada `Tareas.vue`, donde agregaremos un nuestro listado de 
 export default {
   data() {
     return {
-      tareas: [],
+      notas: [],
     };
   },
   created(){
-    this.listarTareas();
+    this.listarNotas();
   },
   methods:{
-    listarTareas(){
-      this.axios.get('tareas')
+    listarNotas(){
+      this.axios.get('notas')
       .then((response) => {
         // console.log(response.data)
-        this.tareas = response.data;
+        this.notas = response.data;
       })
       .catch((e)=>{
         console.log('error' + e);
@@ -133,10 +133,10 @@ data() {
 
 ## View POST
 ```html
-<form @submit.prevent="agregarTarea(tarea)" v-if="agregar">
-  <h3 class="text-center">Agregar nueva Tarea</h3>
-  <input type="text" placeholder="Ingrese un Nombre" class="form-control my-2" v-model="tarea.nombre">
-  <input type="text" placeholder="Ingrese una descripcion" class="form-control my-2" v-model="tarea.descripcion">
+<form @submit.prevent="agregarNota(nota)" v-if="agregar">
+  <h3 class="text-center">Agregar nueva Nota</h3>
+  <input type="text" placeholder="Ingrese un Nombre" class="form-control my-2" v-model="nota.nombre">
+  <input type="text" placeholder="Ingrese una descripcion" class="form-control my-2" v-model="nota.descripcion">
   <b-button class="btn-sm btn-block btn-success" type="submit">Agregar</b-button>
 </form>
 ```
@@ -144,21 +144,21 @@ data() {
 export default {
   data() {
     return {
-      tareas: [],
-      tarea: {},
+      notas: [],
+      nota: {},
       agregar: true,
     };
   },
   methods:{
-    agregarTarea(item){
-      this.axios.post('nueva-tarea', item)
+    agregarNota(item){
+      this.axios.post('nueva-nota', item)
         .then(res => {
-          // Agrega al inicio de nuestro array Tareas
-          this.tareas.unshift(res.data);
+          // Agrega al inicio de nuestro array notas
+          this.notas.unshift(res.data);
 
           // Alerta de mensaje
           this.showAlert();
-          this.mensaje.texto = 'Tarea Agregada!'
+          this.mensaje.texto = 'Notas Agregada!'
           this.mensaje.color = 'success';
         })
         .catch( e => {
@@ -169,7 +169,7 @@ export default {
           this.mensaje.color = 'danger';
           this.mensaje.texto = e.response.data.error.errors.nombre.message;
         })
-      this.tarea = {}
+      this.notas = {}
     },
   }
 };
@@ -178,17 +178,17 @@ export default {
 ## View DELETE
 ```html
 <!-- Dentro del ciclo for (Tabla) -->
-<b-button class="btn-danger btn-sm mx-2" @click="eliminarTarea(item._id)">Eliminar</b-button>
+<b-button class="btn-danger btn-sm mx-2" @click="eliminarNota(item._id)">Eliminar</b-button>
 ```
 ```js
-eliminarTarea(id){
-  this.axios.delete(`tarea/${id}`)
+eliminarNota(id){
+  this.axios.delete(`nota/${id}`)
     .then(res => {
-      let index = this.tareas.findIndex( item => item._id === res.data._id )
-      this.tareas.splice(index, 1);
+      let index = this.notas.findIndex( item => item._id === res.data._id )
+      this.notas.splice(index, 1);
 
       this.showAlert();
-      this.mensaje.texto = 'Tarea Eliminada!'
+      this.mensaje.texto = 'Notas Eliminada!'
       this.mensaje.color = 'danger'
     })
     .catch( e => {
@@ -199,11 +199,11 @@ eliminarTarea(id){
 
 ## View PUT
 ```html
-<form @submit.prevent="editarTarea(tareaEditar)" v-else>
-  <h3 class="text-center">Editar Tarea</h3>
-  <input type="text" placeholder="Ingrese un Nombre" class="form-control my-2" v-model="tareaEditar.nombre">
+<form @submit.prevent="editarNota(notaEditar)" v-else>
+  <h3 class="text-center">Editar Nota</h3>
+  <input type="text" placeholder="Ingrese un Nombre" class="form-control my-2" v-model="notaEditar.nombre">
   <input type="text" placeholder="Ingrese una descripcion" 
-  class="form-control my-2" v-model="tareaEditar.descripcion">
+  class="form-control my-2" v-model="notaEditar.descripcion">
   <b-button class="btn-sm btn-block mb-1 btn-warning" type="submit">Editar</b-button>
   <b-button class="btn-sm btn-block" @click="agregar = true">Cancelar</b-button>
 </form>
@@ -216,7 +216,7 @@ eliminarTarea(id){
 data() {
   return {
     agregar: true,
-    tareaEditar: {},
+    notaEditar: {},
   };
 },
 method:{
@@ -224,22 +224,22 @@ method:{
     this.agregar = false;
     this.axios.get(`buscar/?_id=${id}`)
       .then(res => {
-        this.tareaEditar = res.data;
+        this.notaEditar = res.data;
       })
       .catch(e => {
         console.log(e.response);
       })
   },
-  editarTarea(item){
-    this.axios.put(`tarea/${item._id}`, item)
+  editarNota(item){
+    this.axios.put(`nota/${item._id}`, item)
       .then(res => {
-        let index = this.tareas.findIndex( itemTarea => itemTarea._id === this.tareaEditar._id);
-        this.tareas[index].nombre = this.tareaEditar.nombre;
-        this.tareas[index].descripcion = this.tareaEditar.descripcion;
-        this.tareaEditar = {}
+        let index = this.notas.findIndex( itemNota => itemNota._id === this.notaEditar._id);
+        this.notas[index].nombre = this.notaEditar.nombre;
+        this.notas[index].descripcion = this.notaEditar.descripcion;
+        this.notaEditar = {}
 
         this.showAlert();
-        this.mensaje.texto = 'Tarea Actualizada'
+        this.mensaje.texto = 'Nota Actualizada'
         this.mensaje.color = 'success'
       })
       .catch(e => {

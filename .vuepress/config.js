@@ -1,5 +1,5 @@
 module.exports = {
-  title: 'MEVN - Full Stack Vue.js, Express & MongoDB',
+  title: 'Vue.js, Node.js, Express & MongoDB [MEVN]',
   description: 'Aprende Full Stack Vue.js, Express & MongoDB',
   base: '/mevn',
   locales:{
@@ -11,14 +11,16 @@ module.exports = {
     nav: [
       { text: 'Guía', link: '/' },
       { text: 'Vue.js Youtube', link: 'https://goo.gl/QzLoFY' },
-      { text: 'Curso Vue.js Udemy', link: 'http://bit.ly/2WtBh9f' },
+      { text: 'Curso Vue.js Udemy', link: 'http://bit.ly/2lOz37a' },
     ],
     sidebar:
       [
         '/',
         '/01-primeros-pasos/',
-        '/02-bases-datos/',
-        '/03-vue/',
+        // '/02-bases-datos/',
+        // '/03-vue/',
+        // '/04-auth/',
+        // '/05-nota-auth/',
       ]
   }
  

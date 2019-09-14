@@ -110,8 +110,10 @@ npm install --save connect-history-api-fallback
 
 Muy importante copiar el siguiente código por abajo de la configuración de las rutas y dejar la configuración de rutas estáticas al final:
 ```js
-// Configuración globarl de rutas
-app.use('/api', require('./routes'));
+// Rutas
+app.get('/', (req, res) => {
+  res.send('Hello World!');
+});
 
 // Middleware para Vue.js router modo history
 const history = require('connect-history-api-fallback');
@@ -211,3 +213,31 @@ Prueba tu servidor ejecutando:
 ```
 npm run devbabel
 ```
+
+## Heroku
+Vamos a subir nuestro proyecto a un servidor [https://dashboard.heroku.com/apps](https://dashboard.heroku.com/apps)
+
+Recomendación Hacer curso de GIT [https://www.youtube.com/watch?v=hWglK8nWh60&t=337s](https://www.youtube.com/watch?v=hWglK8nWh60&t=337s)
+
+1. Registra nuevo usuario
+2. Crear nueva APP
+3. En la pestaña de Deploy utilizar Heroku GIT
+4. Instalar [Heroku CLI](https://devcenter.heroku.com/articles/heroku-cli#download-and-install)
+5. Ejecutar `heroku login`
+6. Modificar Package.json
+```json
+"scripts": {
+  "start": "babel-node app.js --exec",
+}...
+"dependencies": {
+  "@babel/cli": "^7.6.0",
+  "@babel/core": "^7.6.0",
+  "@babel/node": "^7.6.1",
+  "@babel/preset-env": "^7.6.0"
+...
+```
+7. Ejecutar `git init`
+8. Ejecutar: `git add .`
+9. Ejecutar: `heroku git:clone -a nombre de su proyecto`
+10. Ejecutar: `git commit -m "make it better"`
+11. Ejecutar: `git push heroku master`

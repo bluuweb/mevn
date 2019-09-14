@@ -23,44 +23,45 @@ mongoose.connect(uri, options).then(
 ```
 
 ## Schemas
-Un Schema nos sirve para estandarizar nuestros documentos en la collection de nuestra base de datos. Te invito a crear otra carpeta con el nombre `models` y dentro un archivo `tarea.js` [https://mongoosejs.com/docs/guide.html](https://mongoosejs.com/docs/guide.html)
+Un Schema nos sirve para estandarizar nuestros documentos en la collection de nuestra base de datos. Te invito a crear otra carpeta con el nombre `models` y dentro un archivo `nota.js` [https://mongoosejs.com/docs/guide.html](https://mongoosejs.com/docs/guide.html)
 ```js
 import mongoose from 'mongoose';
 const Schema = mongoose.Schema;
 
-const tareaSchema = new Schema({
+const notaSchema = new Schema({
   nombre:   { type: String, required: [true, 'El nombre es necesario'] },
   descripcion: String,
+  usuarioId: String,
   date: { type: Date, default: Date.now },
   activo: Boolean
 });
 
 // Convertir a modelo
-const Tarea = mongoose.model('Tarea', tareaSchema);
+const Nota = mongoose.model('Nota', notaSchema);
 
-export default Tarea;
+export default Nota;
 ```
 
 ## Rutas (POST)
-Vamos a interactuar con nuestras primeras rutas, para esto dentro de la raíz de tu proyecto crea la carpeta `routes` y luego un archivo `tarea.js`
+Vamos a interactuar con nuestras primeras rutas, para esto dentro de la raíz de tu proyecto crea la carpeta `routes` y luego un archivo `nota.js`
 
 ```js
 //Importamos express
 import express from 'express';
 const app = express();
 
-// Importamos modelo Tarea
-import Tarea from '../models/tarea';
+// Importamos modelo Nota
+import Nota from '../models/nota';
 
-// Agregamos una nueva tarea
-app.post('/nueva-tarea', async (req, res)=>{
+// Agregamos una nueva nota
+app.post('/nueva-nota', async (req, res)=>{
 
   let body = req.body;
 
   try {
     
-    const tareaDB = await Tarea.create(body);
-    res.status(200).json(tareaDB);
+    const notaDB = await Nota.create(body);
+    res.status(200).json(notaDB);
 
   } catch (error) {
     
@@ -83,7 +84,7 @@ Vamos a crear un archivo dentro de esta misma carpeta `routes` llamado `index.js
 import express from 'express';
 const app = express();
 
-app.use(require('./tarea'));
+app.use(require('./nota'));
 
 module.exports = app;
 ```
@@ -109,7 +110,7 @@ npm run devbabel
 
 Configuramos a través de POST el llamado a:
 ```s
-http://localhost:3000/nueva-tarea
+http://localhost:3000/nueva-nota
 ```
 
 En Headers configuramos:
@@ -139,16 +140,16 @@ Damos clic en Send y cruzamos los dedos para ver si todo funciona ok.
 
 ## Rutas GET
 ```js
-// Encontrar una tarea
+// Encontrar una nota
 app.get('/buscar/', async (req, res) => {
 
   try {
     console.log(req.query._id);
-    const registroDB = await Tarea.findOne({_id: req.query._id});
+    const registroDB = await Nota.findOne({_id: req.query._id});
     if(!registroDB){
       res.status(404).json({
         ok: false,
-        mensaje: 'No existe la tarea'
+        mensaje: 'No existe la nota'
       });
     }else{
       res.status(200).json(registroDB);
@@ -164,12 +165,12 @@ app.get('/buscar/', async (req, res) => {
 
 });
 
-// Mostrar todas las tareas
-app.get('/tareas', async(req, res) => {
+// Mostrar todas las notas
+app.get('/notas', async(req, res) => {
 
   try {
     let valor = req.query.valor;
-    const registroDB = await Tarea.find({
+    const registroDB = await Nota.find({
       'nombre': new RegExp(valor, 'i')
     }).sort({'date': -1})
     res.status(200).send(registroDB);
@@ -186,18 +187,18 @@ app.get('/tareas', async(req, res) => {
 
 ## Rutas PUT
 ```js
-// Actualizar tarea
-app.put('/tarea/:id', async(req, res) => {
+// Actualizar nota
+app.put('/nota/:id', async(req, res) => {
 
   try {
     
-    const tareaDB = await Tarea.findByIdAndUpdate(
+    const notaDB = await Nota.findByIdAndUpdate(
       {_id: req.params.id},
       {nombre: req.body.nombre, descripcion: req.body.descripcion, activo: req.body.activo},
       {useFindAndModify: false}
       );
 
-      res.status(200).json(tareaDB);
+      res.status(200).json(notaDB);
 
   } catch (error) {
     return res.status(500).json({
@@ -211,22 +212,21 @@ app.put('/tarea/:id', async(req, res) => {
 
 ## Rutas DELETE
 ```js
-// Eliminar Tarea
-// Eliminar Tarea
-app.delete('/tarea/:id', async(req, res) => {
+// Eliminar Nota
+app.delete('/nota/:id', async(req, res) => {
 
 
   try {
-    const tareaDB = await Tarea.findByIdAndDelete({_id: req.params.id});
+    const notaDB = await Nota.findByIdAndDelete({_id: req.params.id});
 
-    if (!tareaDB) {
+    if (!notaDB) {
         return res.status(400).json({
             ok: false,
             mensaje: 'Usuario no encontrado'
         });
     }
 
-    res.status(200).json(tareaDB);
+    res.status(200).json(notaDB);
   } catch (error) {
     return res.status(500).json({
       ok: false,
