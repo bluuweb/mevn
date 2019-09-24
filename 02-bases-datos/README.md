@@ -29,11 +29,11 @@ import mongoose from 'mongoose';
 const Schema = mongoose.Schema;
 
 const notaSchema = new Schema({
-  nombre:   { type: String, required: [true, 'El nombre es necesario'] },
+  nombre: {type: String, required: [true, 'Nombre obligatorio']},
   descripcion: String,
   usuarioId: String,
-  date: { type: Date, default: Date.now },
-  activo: Boolean
+  date:{type: Date, default: Date.now},
+  activo: {type: Boolean, default: true}
 });
 
 // Convertir a modelo
@@ -46,40 +46,31 @@ export default Nota;
 Vamos a interactuar con nuestras primeras rutas, para esto dentro de la raíz de tu proyecto crea la carpeta `routes` y luego un archivo `nota.js`
 
 ```js
-//Importamos express
 import express from 'express';
-const app = express();
+const router = express.Router();
 
-// Importamos modelo Nota
+// importar el modelo nota
 import Nota from '../models/nota';
 
-// Agregamos una nueva nota
-app.post('/nueva-nota', async (req, res)=>{
-
-  let body = req.body;
-
+// Agregar una nota
+router.post('/nueva-nota', async(req, res) => {
+  const body = req.body;  
   try {
-    
     const notaDB = await Nota.create(body);
-    res.status(200).json(notaDB);
-
+    res.status(200).json(notaDB); 
   } catch (error) {
-    
     return res.status(500).json({
-      ok: false,
       mensaje: 'Ocurrio un error',
       error
-    });
-    
+    })
   }
-  
 });
 
 // Exportamos la configuración de express app
-module.exports = app;
+module.exports = router;
 ```
 
-Vamos a crear un archivo dentro de esta misma carpeta `routes` llamado `index.js` donde almacenaremos todas las configuraciones:
+<!-- Vamos a crear un archivo dentro de esta misma carpeta `routes` llamado `index.js` donde almacenaremos todas las configuraciones:
 ```js
 import express from 'express';
 const app = express();
@@ -98,6 +89,11 @@ app.get('/', (req, res) => {
 
 // Configuración globarl de rutas
 app.use('/api', require('./routes'));
+``` -->
+
+Configurar `app.js`
+```js
+app.use('/api', require('./routes/nota'));
 ```
 
 ## Postman
@@ -110,7 +106,7 @@ npm run devbabel
 
 Configuramos a través de POST el llamado a:
 ```s
-http://localhost:3000/nueva-nota
+http://localhost:3000/api/nueva-nota
 ```
 
 En Headers configuramos:
@@ -123,7 +119,7 @@ Y en body seleccionamos `x-www-form-urlencoded` y agregamos los campos necesario
 ```s
 nombre | Categoria
 descripcion | Descripción Categoria
-activo | true
+usuarioId | kdkdkdk
 ```
 
 Damos clic en Send y cruzamos los dedos para ver si todo funciona ok.
@@ -132,6 +128,7 @@ Damos clic en Send y cruzamos los dedos para ver si todo funciona ok.
     "_id": "5d6c830664b3a8144c5ad6f1",
     "nombre": "Categoria",
     "descripcion": "Descripción Categoria",
+    "usuarioId": "kdkdkdk",
     "activo": true,
     "date": "2019-09-02T02:48:38.281Z",
     "__v": 0
@@ -140,6 +137,34 @@ Damos clic en Send y cruzamos los dedos para ver si todo funciona ok.
 
 ## Rutas GET
 ```js
+// Get con parámetros
+router.get('/nota/:id', async(req, res) => {
+  const _id = req.params.id;
+  try {
+    const notaDB = await Nota.findOne({_id});
+    res.json(notaDB);
+  } catch (error) {
+    return res.status(400).json({
+      mensaje: 'Ocurrio un error',
+      error
+    })
+  }
+});
+
+// Get con todos los documentos
+router.get('/nota', async(req, res) => {
+  try {
+    const notaDb = await Nota.find();
+    res.json(notaDb);
+  } catch (error) {
+    return res.status(400).json({
+      mensaje: 'Ocurrio un error',
+      error
+    })
+  }
+});
+```
+<!-- ```js
 // Encontrar una nota
 app.get('/buscar/', async (req, res) => {
 
@@ -183,58 +208,49 @@ app.get('/notas', async(req, res) => {
     });
   }
 });
+``` -->
+
+
+## Rutas DELETE
+```js
+// Delete eliminar una nota
+router.delete('/nota/:id', async(req, res) => {
+  const _id = req.params.id;
+  try {
+    const notaDb = await Nota.findByIdAndDelete({_id});
+    if(!notaDb){
+      return res.status(400).json({
+        mensaje: 'No se encontró el id indicado',
+        error
+      })
+    }
+    res.json(notaDb);  
+  } catch (error) {
+    return res.status(400).json({
+      mensaje: 'Ocurrio un error',
+      error
+    })
+  }
+});
 ```
 
 ## Rutas PUT
 ```js
-// Actualizar nota
-app.put('/nota/:id', async(req, res) => {
-
+// Put actualizar una nota
+router.put('/nota/:id', async(req, res) => {
+  const _id = req.params.id;
+  const body = req.body;
   try {
-    
-    const notaDB = await Nota.findByIdAndUpdate(
-      {_id: req.params.id},
-      {nombre: req.body.nombre, descripcion: req.body.descripcion, activo: req.body.activo},
-      {useFindAndModify: false}
-      );
-
-      res.status(200).json(notaDB);
-
+    const notaDb = await Nota.findByIdAndUpdate(
+      _id,
+      body,
+      {new: true});
+    res.json(notaDb);  
   } catch (error) {
-    return res.status(500).json({
-      ok: false,
+    return res.status(400).json({
       mensaje: 'Ocurrio un error',
       error
-    });
+    })
   }
 });
 ```
-
-## Rutas DELETE
-```js
-// Eliminar Nota
-app.delete('/nota/:id', async(req, res) => {
-
-
-  try {
-    const notaDB = await Nota.findByIdAndDelete({_id: req.params.id});
-
-    if (!notaDB) {
-        return res.status(400).json({
-            ok: false,
-            mensaje: 'Usuario no encontrado'
-        });
-    }
-
-    res.status(200).json(notaDB);
-  } catch (error) {
-    return res.status(500).json({
-      ok: false,
-      mensaje: 'Ocurrio un error',
-      error
-    });
-  }
-
-});
-```
-

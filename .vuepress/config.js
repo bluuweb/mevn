@@ -17,7 +17,7 @@ module.exports = {
       [
         '',
         '/01-primeros-pasos/',
-        // '/02-bases-datos/',
+        '/02-bases-datos/',
         // '/03-vue/',
         // '/04-auth/',
         // '/05-nota-auth/',

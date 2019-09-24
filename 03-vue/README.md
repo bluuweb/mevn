@@ -2,6 +2,10 @@
 Vamos a realizar la configuración de Vue.js, si no sabes nada de Vue puedes [acceder al curso aquí](http://bit.ly/2WtBh9f)
 
 ## Intalación Vue UI
+[https://cli.vuejs.org/guide/prototyping.html](https://cli.vuejs.org/guide/prototyping.html)
+```
+npm install -g @vue/cli-service-global
+```
 La configuración de un nuevo proyecto ya está explicado en el curso, por lo tanto en general ejecutar:
 ```
 vue ui
@@ -46,6 +50,28 @@ Configurar rutas: Agregaremos la siguiente ruta con una vista:
   name: 'notas',
   component: () => import(/* webpackChunkName: "about" */ './views/Notas.vue')
 }
+```
+
+## Rutas Backend
+GET (Todas las notas)
+```s
+http://localhost:3000/api/nota
+```
+GET (Nota individual)
+```s
+http://localhost:3000/api/nota/idNota
+```
+POST (Agregar nota)
+```s
+http://localhost:3000/api/nueva-nota
+```
+DELETE (Eliminar nota)
+```s
+http://localhost:3000/api/nota/idNota
+```
+PUT (Actualizar nota)
+```s
+http://localhost:3000/api/nota/idNota
 ```
 
 ## View GET
