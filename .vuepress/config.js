@@ -11,16 +11,16 @@ module.exports = {
     nav: [
       { text: 'Guía', link: '/' },
       { text: 'Vue.js Youtube', link: 'https://goo.gl/QzLoFY' },
-      { text: 'Curso Vue.js Udemy', link: 'http://bit.ly/2lOz37a' },
+      { text: 'Curso Vue.js Udemy', link: 'http://curso-vue-js-udemy.bluuweb.cl' },
     ],
     sidebar:
       [
-        '',
+        '/',
         '/01-primeros-pasos/',
         '/02-bases-datos/',
-        // '/03-vue/',
+        '/03-vue/'
         // '/04-auth/',
-        // '/05-nota-auth/',
+        // '/05-nota-auth/'
       ]
   }
  

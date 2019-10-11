@@ -136,7 +136,7 @@ module.exports = router;
 ```
 
 ## Eliminar pass JSON
-En nuestro Squema agregar:
+En nuestro Squema agregar: [info](https://medium.com/@contactsunny/hide-properties-of-mongoose-objects-in-node-js-json-responses-a5437a5dbec2)
 ```js
 // Eliminar pass de respuesta JSON
 userSchema.methods.toJSON = function() {
