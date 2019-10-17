@@ -144,46 +144,60 @@ npm i jwt-decode --save
 ```
 
 ```js
-// Tenermos que modificar nuestro archivo router:
+import Vue from 'vue'
+import Vuex from 'vuex'
+
 import router from './router'
 
 // para decodificar el jwt
 import decode from 'jwt-decode'
 
+Vue.use(Vuex)
+
 export default new Vuex.Store({
   state: {
-    token: localStorage.getItem('token') || '',
+    token: '',
     usuarioDB: ''
   },
   mutations: {
     obtenerUsuario(state, payload){
       state.token = payload;
       if(payload === ''){
-        state.usuarioDB = '';
+        state.usuarioDB = ''
       }else{
         state.usuarioDB = decode(payload);
+        router.push({name: 'notas'})
       }
     }
   },
   actions: {
+
     guardarUsuario({commit}, payload){
-      // Guardamos token en LocalStorage
       localStorage.setItem('token', payload);
-      commit('obtenerUsuario', payload);
-      
-      // Posteriormente crearemos la vista Nota.vue 
-      router.push({name: 'nota'})
+      commit('obtenerUsuario', payload)
     },
     cerrarSesion({commit}){
       commit('obtenerUsuario', '');
       localStorage.removeItem('token');
       router.push({name: 'login'});
+    },
+    leerToken({commit}){
+
+      const token = localStorage.getItem('token');
+      if(token){
+        commit('obtenerUsuario', token);
+      }else{
+        commit('obtenerUsuario', '');
+      }
+
     }
+
   },
   getters:{
     estaActivo: state => !!state.token
   }
-}
+})
+
 ```
 
 ## router.js
@@ -280,24 +294,49 @@ export default {
     ...mapState(["token"])
   },
   methods: {
-    ...mapActions(['cerrarSesion']),
-    getTareas() {
+    listarNotas(){
       let config = {
         headers: {
           token: this.token
         }
-      };
-      this.axios
-        .get("/nota", config)
-        // .get("/nota")
+      }
+
+      this.axios.get('/nota', config)
         .then(res => {
-          // console.log(res.data);
-          this.notas = res.data
+          console.log(res.data);
+          this.notas = res.data;
         })
         .catch(e => {
-          console.log(e);
-        });
-    }
+          console.log(e.response);
+        })
+    },
+    agregarNota(){
+      let config = {
+        headers: {
+          token: this.token
+        }
+      }
+      // console.log(this.nota);
+      this.axios.post('/nueva-nota', this.nota, config)
+        .then(res => {
+          this.notas.push(res.data)
+          this.nota.nombre = '';
+          this.nota.descripcion = '';
+          this.mensaje.color = 'success';
+          this.mensaje.texto = 'Nota Agregada!';
+          this.showAlert()
+        })
+        .catch(e => {
+          console.log(e.response);
+          if(e.response.data.error.errors.nombre.message){
+            this.mensaje.texto = e.response.data.error.errors.nombre.message
+          }else{
+            this.mensaje.texto = 'Error de sistema';
+          }
+          this.mensaje.color = 'danger';
+          this.showAlert()
+        })
+    },
   },
   created() {
     this.getTareas();
@@ -323,17 +362,15 @@ export default {
 ```js
 import { mapActions, mapGetters } from "vuex";
 export default {
-  data() {
-    return {
-      
-    }
+  methods:{
+    ...mapActions(['cerrarSesion', 'leerToken'])
   },
   computed:{
     ...mapGetters(['estaActivo'])
   },
-  methods:{
-    ...mapActions(['cerrarSesion'])
-  },
+  created(){
+    this.leerToken();
+  }
 }
 ```
 

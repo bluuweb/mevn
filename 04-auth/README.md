@@ -1,7 +1,7 @@
 # 04 Autenticación
 Ahora realizaremos la autenticación de usuarios:
 
-## Generador de aplicaciones Express
+<!-- ## Generador de aplicaciones Express
 [https://expressjs.com/es/starter/generator.html](https://expressjs.com/es/starter/generator.html)
 Utilice la herramienta de generador de aplicaciones, express, para crear rápidamente un esqueleto de aplicación.
 
@@ -49,10 +49,10 @@ mongoose.connect(uri, options).then(
 Para hacer un campo único que no se repita en la base de datos tenemos [mongoose-unique-validator](https://www.npmjs.com/package/mongoose-unique-validator)
 ```
 npm i mongoose-unique-validator --save
-```
+``` -->
 
 ## Models
-Ahora crearemos nuestro modelo utilizando campos únicos, crea una carpeta `models` y dentro un archivo `user.js`
+Crearemos nuestro modelo utilizando campos únicos, en la carpeta `models` crea un archivo `user.js`
 ```js{3,5-9,15,18,22-23}
 import mongoose from 'mongoose';
 
@@ -367,7 +367,7 @@ return res.json({
 ## Middlewares
 Crear carpeta en la raíz de nuestro proyecto llamada `middlewares` y dentro un archivo llamado: `autenticacion.js`
 ```js
-const verificaToken = (req, res, next) => {
+const verificarAuth = (req, res, next) => {
 
   // Leer headers
   let token = req.get('token');
@@ -378,12 +378,14 @@ const verificaToken = (req, res, next) => {
 
 }
 
-module.exports = {verificaToken};
+module.exports = {verificarAuth};
 ```
 
 Ahora en la ruta de `user.js` llamamos al middleware para ver si está funcionando...
 ```js
-router.get('/usuario', verificaToken , async(req, res) => {
+const {verificarAuth} = require('../middlewares/autenticacion.js');
+
+router.get('/usuario', verificarAuth , async(req, res) => {
 ```
 
 ## Verificar Token
@@ -391,7 +393,7 @@ Vamos a verificar un token válido, en `autenticacion.js` (Al enviar la petició
 ```js
 const jwt = require('jsonwebtoken');
 
-let verificaToken = (req, res, next) => {
+let verificarAuth = (req, res, next) => {
 
   // Leer headers
   let token = req.get('token');
@@ -413,7 +415,7 @@ let verificaToken = (req, res, next) => {
 
 }
 
-module.exports = {verificaToken};
+module.exports = {verificarAuth};
 ```
 
 Ahora aplicar a todas la peticiones de user.
@@ -436,19 +438,19 @@ let verificaRol = (req, res, next) => {
 
 }
 
-module.exports = {verificaToken, verificaRol};
+module.exports = {verificarAuth, verificaRol};
 ```
 
 Utilizar en POST, PUT, DELETE
 ```js
 // Middlewares
-const {verificaToken, verificaRol} = require('../middlewares/autenticacion');
+const {verificarAuth, verificaRol} = require('../middlewares/autenticacion');
 
-router.post('/nuevo-usuario', [verificaToken, verificaRol], async (req, res) => {
+router.post('/nuevo-usuario', [verificarAuth, verificaRol], async (req, res) => {
 
-router.put('/usuario/:id', [verificaToken, verificaRol], async(req, res) => {
+router.put('/usuario/:id', [verificarAuth, verificaRol], async(req, res) => {
 
-router.delete('/usuario/:id', [verificaToken, verificaRol], async(req, res) => {
+router.delete('/usuario/:id', [verificarAuth, verificaRol], async(req, res) => {
 ```
 
 
