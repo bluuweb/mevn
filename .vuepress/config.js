@@ -20,6 +20,7 @@ module.exports = {
         '/03-vue/',
         '/04-auth/',
         '/05-nota-auth/',
+        '/06-paginacion/'
       ]
   }
  

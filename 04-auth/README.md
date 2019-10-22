@@ -213,7 +213,7 @@ router.put('/usuario/:id', async(req, res) => {
 });
 ```
 
-## GET usuario paginados
+<!-- ## GET usuario paginados
 Vamos a crear un get para traer x cantidad de usuario de nuestra base de datos:
 ```js
 router.get('/usuario', async(req, res) => {
@@ -236,7 +236,7 @@ router.get('/usuario', async(req, res) => {
   }
 
 });
-```
+``` -->
 
 ## DELETE Usuario
 ```js
